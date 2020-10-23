@@ -1,3 +1,9 @@
+# this is R code put together by Tim Meehan and Bill DeLuca to do analyses
+# related to DeLuca et al. 2020 (citation).
+
+
+
+
 # setup ------------------------------------------------------------------------
 # set up a bunch of stuff. load libraries, set options, define spatial 
 # reference systems, etc.
@@ -323,82 +329,6 @@ run_species <- function(spp1="Western Tanager"){
   write.csv(grid_props, paste0("./output/", spp1, " grid proportions.csv"), 
             na="", 
             row.names=F)
-
-  # fraction data
-  seas_sums <- results %>% 
-    group_by(species,
-             pif_est_na_sum, pif_est_na_sum_se,
-             season) %>%
-    summarise(sum_migs=sum(n_migs),
-              sum_migs_se=sqrt(sum(n_migs_se^2)))
-  
-  # get fractions
-  # spring fractions
-  expr1 <- expression(x/y)
-  seas <- "prebreeding_migration"
-  x <- c(seas_sums$sum_migs[which(seas_sums$season==seas)], 
-         seas_sums$sum_migs_se[which(seas_sums$season==seas)])
-  y <- c(seas_sums$pif_est_na_sum[which(seas_sums$season==seas)], 
-         seas_sums$pif_est_na_sum_se[which(seas_sums$season==seas)])
-  df1 <- cbind(x, y)
-  res1 <- propagate(expr=expr1, data = df1, second.order=F,
-                    do.sim=F)
-  seas_sums$na_prop <- NA
-  seas_sums$na_prop[which(seas_sums$season==seas)]<- res1$prop[1]
-  seas_sums$na_prop_se <- NA
-  seas_sums$na_prop_se[which(seas_sums$season==seas)] <- res1$prop[3]
-  seas_sums$na_prop_lcl <- NA
-  seas_sums$na_prop_lcl[which(seas_sums$season==seas)] <- res1$prop[5]
-  seas_sums$na_prop_ucl <- NA
-  seas_sums$na_prop_ucl[which(seas_sums$season==seas)] <- res1$prop[6]
-  
-  # fall fractions
-  seas <- "postbreeding_migration"
-  x <- c(seas_sums$sum_migs[which(seas_sums$season==seas)], 
-         seas_sums$sum_migs_se[which(seas_sums$season==seas)])
-  y <- c(seas_sums$pif_est_na_sum[which(seas_sums$season==seas)], 
-         seas_sums$pif_est_na_sum_se[which(seas_sums$season==seas)])
-  df1 <- cbind(x, y)
-  res1 <- propagate(expr=expr1, data = df1, second.order=F,
-                    do.sim=F)
-  seas_sums$na_prop[which(seas_sums$season==seas)]<- res1$prop[1]
-  seas_sums$na_prop_se[which(seas_sums$season==seas)] <- res1$prop[3]
-  seas_sums$na_prop_lcl[which(seas_sums$season==seas)] <- res1$prop[5]
-  seas_sums$na_prop_ucl[which(seas_sums$season==seas)] <- res1$prop[6]
-  
-  # breeding fractions
-  seas <- "breeding"
-  x <- c(seas_sums$sum_migs[which(seas_sums$season==seas)], 
-         seas_sums$sum_migs_se[which(seas_sums$season==seas)])
-  y <- c(seas_sums$pif_est_na_sum[which(seas_sums$season==seas)], 
-         seas_sums$pif_est_na_sum_se[which(seas_sums$season==seas)])
-  df1 <- cbind(x, y)
-  res1 <- propagate(expr=expr1, data = df1, second.order=F,
-                    do.sim=F)
-  seas_sums$na_prop[which(seas_sums$season==seas)]<- res1$prop[1]
-  seas_sums$na_prop_se[which(seas_sums$season==seas)] <- res1$prop[3]
-  seas_sums$na_prop_lcl[which(seas_sums$season==seas)] <- res1$prop[5]
-  seas_sums$na_prop_ucl[which(seas_sums$season==seas)] <- res1$prop[6]
-  
-  # winter fractions
-  seas <- "nonbreeding"
-  x <- c(seas_sums$sum_migs[which(seas_sums$season==seas)], 
-         seas_sums$sum_migs_se[which(seas_sums$season==seas)])
-  y <- c(seas_sums$pif_est_na_sum[which(seas_sums$season==seas)], 
-         seas_sums$pif_est_na_sum_se[which(seas_sums$season==seas)])
-  df1 <- cbind(x, y)
-  res1 <- propagate(expr=expr1, data = df1, second.order=F,
-                    do.sim=F)
-  seas_sums$na_prop[which(seas_sums$season==seas)]<- res1$prop[1]
-  seas_sums$na_prop_se[which(seas_sums$season==seas)] <- res1$prop[3]
-  seas_sums$na_prop_lcl[which(seas_sums$season==seas)] <- res1$prop[5]
-  seas_sums$na_prop_ucl[which(seas_sums$season==seas)] <- res1$prop[6]
-  
-  # write fraction data
-  write.csv(seas_sums, paste0("./output/", 
-                               spp1, " fraction summary.csv"), 
-            na="", row.names=F)
-  
 }
 # ------------------------------------------------------------------------------
 
