@@ -1,9 +1,8 @@
 # this is R code put together by Tim Meehan and Bill DeLuca to do analyses
 # related to William V. DeLuca, Tim Meehan, Nat Seavy, Andrea Jones, Jennifer Pitt, J
-# Jill L. Deppe, and Chad B. Wilsey. 2020. Ornithological Applications.
-
-
-
+# Jill L. Deppe, and Chad B. Wilsey. 2020. The Colorado River Delta and California’s 
+# Central Valley are critical regions for many migrating North American landbirds.
+# Ornithological Applications.
 
 # setup ------------------------------------------------------------------------
 # set up a bunch of stuff. load libraries, set options, define spatial 
