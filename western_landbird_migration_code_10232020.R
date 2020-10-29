@@ -1,5 +1,6 @@
 # this is R code put together by Tim Meehan and Bill DeLuca to do analyses
-# related to DeLuca et al. 2020 (citation).
+# related to William V. DeLuca, Tim Meehan, Nat Seavy, Andrea Jones, Jennifer Pitt, J
+# Jill L. Deppe, and Chad B. Wilsey. 2020. Ornithological Applications.
 
 
 
@@ -32,7 +33,7 @@ options(max.print=99999)
 extract <- raster::extract
 select <- dplyr::select
 
-# plot
+# time series plot function 
 theme_timeseries <- function (base_size = 11, base_family = "") {
   theme_grey(base_size = base_size, base_family = base_family) %+replace%
     theme(panel.background = element_rect(fill = "white", colour = NA),
@@ -98,7 +99,7 @@ collapse_est <- read.csv("./data/bird_decline.csv")
 
 
 # get spp data -----------------------------------------------------------------
-# make species list
+# make species list, here we select two species as examples
 # View(ebirdst_runs)
 spp_list <- c("Yellow Warbler", "Western Tanager")
 
@@ -110,6 +111,7 @@ spp_list %in% ebirdst_runs$common_name
 
 
 # this function does most of the work ------------------------------------------
+# it is the basis for figs 2 - 5 and tables s1, s2, quantifying total individuals and proportions
 # source this function and then run it in a parallel loop below for multiple
 # species.
 run_species <- function(spp1="Western Tanager"){
@@ -355,7 +357,7 @@ stopCluster(cl)
 
 
 # time series plots ------------------------------------------------------------
-# make some time series plots per species to show how many birds are at the 
+# make time series plots per species (figure S3) to show how many birds are at the 
 # focal area at any given time. note that these are all birds, migrants and 
 # residents.
 setwd("./output")
@@ -405,10 +407,13 @@ for(i in 1:length(flist)){
 
 
 # correct the grid data --------------------------------------------------------
-# after writing and running the workhorse function, we realized that grid cell
-# relative abundances represented migrants and residents. so we came up with a 
+# In order to account for breeders and winter residents, and ensure
+# relative abundances represented migrants, we came up with a 
 # way to subtract off potential residents so that the grid cell proportions
-# represented migrating birds and proportions.
+# represented migrating birds and proportions. conceptually represented in fig S1.
+# .csv output is the basis for fig 4.
+
+#for an example focal cell
 foc_cell <- 2
 flist <- list.files(pattern="grid proportions.csv")
 
@@ -472,8 +477,7 @@ for(i in 1:length(flist)){
 
 
 # plot the grid data -----------------------------------------------------------
-# this chunk of code makes the grid plots found in the appendix of the 
-# manuscript.
+# create the grid plots shown in fig. 4 fig S4 of the manuscript.
 # identify the cell with the focal area
 foc_cell <- 2
 
@@ -538,7 +542,7 @@ for(i in 1:length(flist)){
 # this pile of code grabs the weekly abundance estimates, subtracts away the 
 # possible residents, estimates the total number of migrants going through
 # during migration (area under histogram), and estimates the proportion of the 
-# total continental populations that use the region during migration.
+# total continental populations that use the region during migration used in fig 3.
 
 # get file paths
 flist <- list.files(pattern="number migrants.csv")
@@ -653,6 +657,8 @@ write.csv(week_sum, "species week summary.csv",
           row.names=F, na="")
 
 # time series plot with all species and the total summed migrants
+# similar to fig 2, but here we show total migrants by week with se
+# and a line for each individual species without se, uniquely colored.
 names(week_sum)
 d1 <- week_sum %>% 
   mutate(week=ymd(week)) %>%
@@ -707,7 +713,7 @@ rbind(as.matrix(wide[1, c(2,3)]), as.matrix(wide[1, c(4,5)])) %>%
 
 # make more summary tables and figures -----------------------------------------
 # this code calculates the number of weeks where the focal grid cell proportion
-# exceeds a null proportion (0.13) that represents even use of all cells.
+# exceeds a null proportion (0.13) that represents even use of all cells used in fig 5.
 focal_cell <- 2 
 cut_prop <- 0.13
 flist <- list.files(pattern="grid proportions.csv")
